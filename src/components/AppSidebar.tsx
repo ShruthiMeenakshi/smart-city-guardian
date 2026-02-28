@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   Zap,
 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navItems = [
   { path: '/', label: 'Command Center', icon: LayoutDashboard },
