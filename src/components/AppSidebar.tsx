@@ -88,11 +88,12 @@ export function AppSidebar() {
         })}
       </nav>
 
-      {/* Collapse toggle */}
-      <div className="p-3 border-t border-sidebar-border">
+      {/* Bottom controls */}
+      <div className="p-3 border-t border-sidebar-border flex items-center gap-2">
+        <ThemeToggle />
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors"
         >
           <ChevronLeft className={`h-4 w-4 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
           {!collapsed && <span>Collapse</span>}
