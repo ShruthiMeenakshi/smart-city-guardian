@@ -3,7 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
+import ReportsPage from "./pages/Reports";
+import MapPage from "./pages/MapRoute";
+import GovernancePage from "./pages/Governance";
+import CircularPage from "./pages/Circular";
+import ChatbotPage from "./pages/Chatbot";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -14,11 +20,20 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="flex min-h-screen">
+          <AppSidebar />
+          <main className="flex-1 p-6 overflow-y-auto">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/map" element={<MapPage />} />
+              <Route path="/governance" element={<GovernancePage />} />
+              <Route path="/circular" element={<CircularPage />} />
+              <Route path="/chatbot" element={<ChatbotPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
