@@ -16,6 +16,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navItems = [
   { path: '/', label: 'Command Center', icon: LayoutDashboard },
+  { path: '/inspector', label: 'Inspector Panel', icon: Shield },
   { path: '/reports', label: 'Reports', icon: FileWarning },
   { path: '/map', label: 'Route & Map', icon: Map },
   { path: '/governance', label: 'Governance', icon: Trophy },
