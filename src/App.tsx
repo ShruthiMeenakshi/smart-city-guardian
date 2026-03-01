@@ -2,10 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { RoleProvider } from "@/contexts/RoleContext";
+import { RoleProvider, useRole } from "@/contexts/RoleContext";
 import { AppSidebar } from "@/components/AppSidebar";
+import { FloatingChatWidget } from "@/components/FloatingChatWidget";
+import Login from "./pages/Login";
 import Index from "./pages/Index";
 import ReportsPage from "./pages/Reports";
 import MapPage from "./pages/MapRoute";
@@ -19,6 +21,40 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function AuthenticatedLayout() {
+  return (
+    <div className="flex min-h-screen">
+      <AppSidebar />
+      <main className="flex-1 p-6 overflow-y-auto">
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/inspector" element={<InspectorPage />} />
+          <Route path="/intelligence" element={<IntelligencePage />} />
+          <Route path="/governance" element={<GovernancePage />} />
+          <Route path="/circular" element={<CircularPage />} />
+          <Route path="/chatbot" element={<ChatbotPage />} />
+          <Route path="/public" element={<PublicDashboard />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <FloatingChatWidget />
+    </div>
+  );
+}
+
+function AppRoutes() {
+  const { isAuthenticated } = useRole();
+
+  return (
+    <Routes>
+      <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />} />
+    </Routes>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -27,23 +63,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="flex min-h-screen">
-          <AppSidebar />
-          <main className="flex-1 p-6 overflow-y-auto">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/map" element={<MapPage />} />
-              <Route path="/inspector" element={<InspectorPage />} />
-              <Route path="/intelligence" element={<IntelligencePage />} />
-              <Route path="/governance" element={<GovernancePage />} />
-              <Route path="/circular" element={<CircularPage />} />
-              <Route path="/chatbot" element={<ChatbotPage />} />
-              <Route path="/public" element={<PublicDashboard />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-        </div>
+        <AppRoutes />
       </BrowserRouter>
     </TooltipProvider>
     </RoleProvider>

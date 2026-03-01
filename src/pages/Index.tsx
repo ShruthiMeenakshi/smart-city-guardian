@@ -13,6 +13,7 @@ import {
   Fuel,
   IndianRupee,
 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Index = () => {
   return (
@@ -27,9 +28,10 @@ const Index = () => {
           <h1 className="text-2xl font-bold text-foreground">Command Center</h1>
           <p className="text-sm text-muted-foreground">Real-time urban waste intelligence — Madurai Corporation</p>
         </div>
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-3 text-xs">
           <span className="h-2 w-2 rounded-full bg-success animate-pulse-glow" />
           <span className="text-muted-foreground font-mono">System Online · {new Date().toLocaleDateString()}</span>
+          <ThemeToggle />
         </div>
       </motion.div>
 

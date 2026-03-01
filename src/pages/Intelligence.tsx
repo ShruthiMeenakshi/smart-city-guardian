@@ -6,6 +6,7 @@ import { CarbonAnalytics } from '@/components/intelligence/CarbonAnalytics';
 import { RecyclingRevenue } from '@/components/intelligence/RecyclingRevenue';
 import { EcoCreditBoard } from '@/components/intelligence/EcoCreditBoard';
 import { Flame, Box, Leaf, IndianRupee, Star } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const IntelligencePage = () => {
   return (
@@ -13,9 +14,13 @@ const IntelligencePage = () => {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between"
       >
-        <h1 className="text-2xl font-bold text-foreground">Intelligence Hub</h1>
-        <p className="text-sm text-muted-foreground">Predictive analytics, digital twin, carbon tracking, revenue engine & citizen gamification</p>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Intelligence Hub</h1>
+          <p className="text-sm text-muted-foreground">Predictive analytics, digital twin, carbon tracking, revenue engine & citizen gamification</p>
+        </div>
+        <ThemeToggle />
       </motion.div>
 
       <Tabs defaultValue="hotspots" className="space-y-4">
