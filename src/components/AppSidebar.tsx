@@ -11,6 +11,7 @@ import {
   Shield,
   ChevronLeft,
   Zap,
+  Brain,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
