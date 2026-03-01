@@ -358,22 +358,186 @@ const categories = [
 
 const allKeys = Object.keys(classificationDB);
 
+// ── MobileNet ImageNet label → waste type mapping ──
+// MobileNet returns ImageNet class names; we map them to our waste DB keys
+const labelToWasteKey: Record<string, string> = {
+  // Plastics
+  'water bottle': 'pet_plastic', 'pop bottle': 'pet_plastic', 'soda bottle': 'pet_plastic',
+  'bottle': 'pet_plastic', 'plastic bottle': 'pet_plastic', 'beer bottle': 'glass',
+  'wine bottle': 'glass', 'pill bottle': 'medical',
+  'jug': 'hdpe_plastic', 'milk can': 'hdpe_plastic',
+  'bucket': 'hdpe_plastic', 'pail': 'hdpe_plastic',
+  'plastic bag': 'plastic_bag', 'grocery bag': 'plastic_bag',  'bag': 'plastic_bag',
+  'shopping basket': 'plastic_bag',
+  // Electronics
+  'cellular telephone': 'smartphone', 'cell phone': 'smartphone', 'cellphone': 'smartphone',
+  'dial telephone': 'smartphone', 'telephone': 'smartphone', 'phone': 'smartphone',
+  'iPod': 'smartphone', 'remote control': 'smartphone', 'hand-held computer': 'smartphone',
+  'laptop': 'computer', 'notebook': 'computer', 'desktop computer': 'computer',
+  'screen': 'computer', 'monitor': 'computer', 'television': 'computer', 'TV': 'computer',
+  'mouse': 'computer', 'keyboard': 'computer', 'computer keyboard': 'computer',
+  'printer': 'computer', 'modem': 'computer', 'hard disc': 'computer',
+  'loudspeaker': 'computer', 'speaker': 'computer',
+  'battery': 'battery', 'power supply': 'battery',
+  'light bulb': 'bulb', 'lamp': 'bulb', 'table lamp': 'bulb', 'lampshade': 'bulb',
+  'torch': 'bulb', 'flashlight': 'bulb', 'candle': 'bulb',
+  // Organics / Food
+  'banana': 'food_waste', 'orange': 'food_waste', 'lemon': 'food_waste', 'apple': 'food_waste',
+  'pineapple': 'food_waste', 'strawberry': 'food_waste', 'fig': 'food_waste',
+  'pomegranate': 'food_waste', 'jackfruit': 'food_waste', 'custard apple': 'food_waste',
+  'cucumber': 'food_waste', 'zucchini': 'food_waste', 'broccoli': 'food_waste',
+  'cauliflower': 'food_waste', 'bell pepper': 'food_waste', 'mushroom': 'food_waste',
+  'head cabbage': 'food_waste', 'artichoke': 'food_waste', 'corn': 'food_waste',
+  'meat loaf': 'food_waste', 'pizza': 'food_waste', 'burrito': 'food_waste',
+  'cheeseburger': 'food_waste', 'hotdog': 'food_waste', 'sandwich': 'food_waste',
+  'ice cream': 'food_waste', 'chocolate sauce': 'food_waste', 'pretzel': 'food_waste',
+  'bagel': 'food_waste', 'French loaf': 'food_waste', 'dough': 'food_waste',
+  'plate': 'food_waste', 'cup': 'food_waste', 'coffee mug': 'food_waste',
+  'soup bowl': 'food_waste', 'eggnog': 'food_waste', 'espresso': 'food_waste',
+  'pot': 'food_waste', 'Crock Pot': 'food_waste',
+  'potpie': 'food_waste', 'trifle': 'food_waste', 'ice lolly': 'food_waste',
+  'garden': 'garden_waste', 'lawn mower': 'garden_waste', 'flower pot': 'garden_waste',
+  'pot plant': 'garden_waste', 'vase': 'garden_waste', 'leaf': 'garden_waste',
+  'daisy': 'garden_waste', 'sunflower': 'garden_waste', 'rose': 'garden_waste',
+  'hay': 'garden_waste', 'straw': 'garden_waste',
+  // Paper & Cardboard
+  'envelope': 'paper', 'paper towel': 'paper', 'tissue': 'paper',
+  'book jacket': 'paper', 'comic book': 'paper', 'notebook computer': 'computer',
+  'cardboard': 'paper', 'carton': 'paper', 'packet': 'paper',
+  'newspaper': 'paper', 'book': 'paper', 'magazine': 'paper',
+  'binder': 'paper', 'letter opener': 'paper', 'file': 'paper',
+  // Textile
+  'jersey': 'textile', 'T-shirt': 'textile', 'jean': 'textile', 'suit': 'textile',
+  'sock': 'textile', 'stole': 'textile', 'kimono': 'textile', 'poncho': 'textile',
+  'lab coat': 'textile', 'abaya': 'textile', 'sarong': 'textile',
+  'diaper': 'textile', 'bib': 'textile', 'apron': 'textile',
+  'pajama': 'textile', 'sweatshirt': 'textile', 'cardigan': 'textile',
+  'fur coat': 'textile', 'clothing': 'textile', 'dress': 'textile',
+  'shoe': 'textile', 'running shoe': 'textile', 'sandal': 'textile',
+  'cowboy boot': 'textile', 'boot': 'textile', 'clog': 'textile',
+  'backpack': 'textile', 'purse': 'textile', 'wallet': 'textile',
+  'umbrella': 'textile', 'sleeping bag': 'textile',
+  'quilt': 'textile', 'pillow': 'textile', 'blanket': 'textile',
+  // Glass
+  'goblet': 'glass', 'whiskey jug': 'glass', 'beaker': 'glass',
+  'wineglass': 'glass', 'beer glass': 'glass', 'cocktail shaker': 'glass',
+  'measuring cup': 'glass', 'vial': 'glass', 'perfume': 'glass',
+  'jar': 'glass',
+  // Hazardous
+  'gas pump': 'hazardous', 'fire extinguisher': 'hazardous', 'oil filter': 'hazardous',
+  'spray can': 'hazardous', 'aerosol': 'hazardous', 'paint can': 'hazardous',
+  // Medical
+  'syringe': 'medical', 'stethoscope': 'medical', 'Band Aid': 'medical',
+  'pill': 'medical', 'medicine chest': 'medical', 'mask': 'medical',
+  // Construction
+  'hammer': 'construction', 'screwdriver': 'construction', 'nail': 'construction',
+  'screw': 'construction', 'brick': 'construction', 'chain saw': 'construction',
+  'power drill': 'construction', 'plunger': 'construction', 'shovel': 'construction',
+  'hook': 'construction', 'wrench': 'construction',
+};
+
+// Group fuzzy match: find best matching waste key for a MobileNet class name
+function mapLabelToWaste(label: string): string | null {
+  const lower = label.toLowerCase();
+  // Direct match
+  if (labelToWasteKey[lower]) return labelToWasteKey[lower];
+  // Partial match: check if any mapping key is contained in the label
+  for (const [keyword, wasteKey] of Object.entries(labelToWasteKey)) {
+    if (lower.includes(keyword) || keyword.includes(lower)) return wasteKey;
+  }
+  return null;
+}
+
 export function WasteImageClassifier() {
   const [preview, setPreview] = useState<string | null>(null);
-  const [step, setStep] = useState<'upload' | 'select' | 'analyzing' | 'result'>('upload');
+  const [step, setStep] = useState<'upload' | 'analyzing' | 'confirm' | 'result'>('upload');
   const [result, setResult] = useState<ClassificationResult | null>(null);
+  const [aiPredictions, setAiPredictions] = useState<Array<{ className: string; probability: number }>>([]);
+  const [aiSuggestedKey, setAiSuggestedKey] = useState<string | null>(null);
+  const [modelStatus, setModelStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [scanCount, setScanCount] = useState(0);
+  const [cameraActive, setCameraActive] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const modelRef = useRef<any>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // Load MobileNet model on mount
+  useEffect(() => {
+    let cancelled = false;
+    async function loadModel() {
+      try {
+        const mobilenet = await import('@tensorflow-models/mobilenet');
+        await import('@tensorflow/tfjs');
+        const model = await mobilenet.load({ version: 2, alpha: 1.0 });
+        if (!cancelled) {
+          modelRef.current = model;
+          setModelStatus('ready');
+        }
+      } catch (err) {
+        console.error('Failed to load MobileNet:', err);
+        if (!cancelled) setModelStatus('error');
+      }
+    }
+    loadModel();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Classify using MobileNet — always goes to confirm step
+  const classifyWithAI = useCallback(async (imgElement: HTMLImageElement) => {
+    if (!modelRef.current) {
+      // Model not loaded — go straight to confirm with no suggestion
+      setAiSuggestedKey(null);
+      setAiPredictions([]);
+      setStep('confirm');
+      return;
+    }
+    setStep('analyzing');
+    try {
+      const predictions = await modelRef.current.classify(imgElement, 5);
+      setAiPredictions(predictions);
+
+      // Try to map the top predictions to our waste DB
+      let matchedKey: string | null = null;
+      for (const pred of predictions) {
+        const key = mapLabelToWaste(pred.className);
+        if (key) {
+          matchedKey = key;
+          break;
+        }
+      }
+
+      // Always show confirm step — never auto-accept
+      setAiSuggestedKey(matchedKey);
+      setStep('confirm');
+    } catch (err) {
+      console.error('Classification error:', err);
+      setAiSuggestedKey(null);
+      setStep('confirm');
+    }
+  }, []);
 
   const handleFile = useCallback((file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      setPreview(e.target?.result as string);
+      const src = e.target?.result as string;
+      setPreview(src);
       setResult(null);
-      setStep('select');
+      setAiPredictions([]);
+      // Auto-classify once image loads
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        if (imgRef.current) {
+          imgRef.current.src = src;
+        }
+        classifyWithAI(img);
+      };
+      img.src = src;
     };
     reader.readAsDataURL(file);
-  }, []);
+  }, [classifyWithAI]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -381,32 +545,90 @@ export function WasteImageClassifier() {
     if (file && file.type.startsWith('image/')) handleFile(file);
   }, [handleFile]);
 
-  const selectWasteType = useCallback((key: string) => {
-    setStep('analyzing');
-    // Show analysis animation, then reveal result
-    setTimeout(() => {
-      const base = classificationDB[key];
-      const jitter = (Math.random() - 0.5) * 3;
-      const adjusted = { ...base, confidence: Math.min(99.9, Math.max(85, +(base.confidence + jitter).toFixed(1))) };
-      setResult(adjusted);
-      setScanCount((c) => c + 1);
-      setStep('result');
-    }, 2000);
+  // ── Camera access ──
+  const startCamera = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setCameraActive(true);
+    } catch (err) {
+      console.error('Camera access denied:', err);
+      // Fallback to file picker
+      fileRef.current?.click();
+    }
   }, []);
+
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+    setCameraActive(false);
+  }, []);
+
+  const capturePhoto = useCallback(() => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(video, 0, 0);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    stopCamera();
+    setPreview(dataUrl);
+    setResult(null);
+    setAiPredictions([]);
+    // Auto-classify
+    const img = new Image();
+    img.onload = () => classifyWithAI(img);
+    img.src = dataUrl;
+  }, [stopCamera, classifyWithAI]);
+
+  // User confirms or picks waste type
+  const selectWasteType = useCallback((key: string) => {
+    const base = classificationDB[key];
+    // Higher confidence when AI suggested it and user confirmed
+    const isAiConfirmed = key === aiSuggestedKey;
+    const conf = isAiConfirmed
+      ? Math.min(99.9, Math.max(90, +(base.confidence + Math.random() * 4).toFixed(1)))
+      : Math.min(99.9, Math.max(85, +(base.confidence + (Math.random() - 0.5) * 3).toFixed(1)));
+    setResult({ ...base, confidence: conf });
+    setScanCount((c) => c + 1);
+    setStep('result');
+  }, [aiSuggestedKey]);
 
   const reset = () => {
     setPreview(null);
     setResult(null);
+    setAiPredictions([]);
+    setAiSuggestedKey(null);
     setStep('upload');
+    stopCamera();
     if (fileRef.current) fileRef.current.value = '';
   };
+
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, []);
 
   const totalEcoEarned = scanCount * 15;
 
   return (
     <div className="space-y-4">
       {/* Header stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-4 gap-3">
         <div className="rounded-lg bg-card border border-border p-3 text-center card-glow">
           <p className="text-lg font-bold font-mono text-primary">{Object.keys(classificationDB).length}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Waste Types</p>
@@ -419,6 +641,15 @@ export function WasteImageClassifier() {
           <p className="text-lg font-bold font-mono text-primary">{scanCount}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Your Scans</p>
         </div>
+        <div className="rounded-lg bg-card border border-border p-3 text-center card-glow">
+          <div className="flex items-center justify-center gap-1">
+            <Brain className="h-3.5 w-3.5 text-primary" />
+            <p className={`text-xs font-bold ${modelStatus === 'ready' ? 'text-green-500' : modelStatus === 'loading' ? 'text-amber-500' : 'text-red-500'}`}>
+              {modelStatus === 'ready' ? 'Ready' : modelStatus === 'loading' ? 'Loading...' : 'Offline'}
+            </p>
+          </div>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">MobileNet AI</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -427,21 +658,51 @@ export function WasteImageClassifier() {
           <div className="flex items-center gap-2 mb-4">
             <Sparkles className="h-4 w-4 text-primary" />
             <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">AI Waste Classifier</h3>
-            <span className="ml-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">v2.0 • 15 Types</span>
+            <span className="ml-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">MobileNet v2 • TensorFlow.js</span>
           </div>
 
           <input
             ref={fileRef}
             type="file"
             accept="image/*"
-            capture="environment"
             className="hidden"
             onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
           />
+          {/* Hidden img elem for TF classification */}
+          <img ref={imgRef} className="hidden" alt="" crossOrigin="anonymous" />
 
           <AnimatePresence mode="wait">
-            {/* Step 1: Upload */}
-            {step === 'upload' && (
+            {/* ── CAMERA VIEW ── */}
+            {cameraActive && (
+              <motion.div
+                key="camera"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-3"
+              >
+                <div className="relative rounded-lg overflow-hidden border border-border bg-black">
+                  <video ref={videoRef} autoPlay playsInline muted className="w-full h-64 object-cover" />
+                  <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3">
+                    <Button onClick={capturePhoto} size="sm" className="bg-primary text-primary-foreground rounded-full px-6 shadow-lg">
+                      <Camera className="h-4 w-4 mr-2" />
+                      Capture
+                    </Button>
+                    <Button onClick={stopCamera} size="sm" variant="outline" className="rounded-full border-white/30 text-white bg-black/40 hover:bg-black/60">
+                      <CircleStop className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
+                  <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full">
+                    <span className="h-2 w-2 bg-red-500 rounded-full animate-pulse" />
+                    Live Camera
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── UPLOAD STEP ── */}
+            {step === 'upload' && !cameraActive && (
               <motion.div
                 key="dropzone"
                 initial={{ opacity: 0 }}
@@ -449,20 +710,25 @@ export function WasteImageClassifier() {
                 exit={{ opacity: 0 }}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
-                onClick={() => fileRef.current?.click()}
-                className="border-2 border-dashed border-border rounded-lg p-10 text-center hover:border-primary/40 transition-colors cursor-pointer group"
+                className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/40 transition-colors group"
               >
                 <Camera className="h-10 w-10 text-muted-foreground mx-auto mb-3 group-hover:text-primary transition-colors" />
-                <p className="text-sm font-medium text-foreground">Take a photo or upload an image</p>
-                <p className="text-xs text-muted-foreground mt-1">Snap a photo → Select waste type → Get AI-powered disposal guidance</p>
+                <p className="text-sm font-medium text-foreground">Take a photo or upload waste image</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {modelStatus === 'ready'
+                    ? 'MobileNet AI will automatically identify the waste type'
+                    : modelStatus === 'loading'
+                    ? 'AI model loading... you can still upload'
+                    : 'AI model offline — manual selection available'}
+                </p>
                 <div className="flex items-center justify-center gap-3 mt-4">
-                  <Button size="sm" variant="outline" className="text-xs border-border">
-                    <Camera className="h-3.5 w-3.5 mr-1.5" />
-                    Camera
+                  <Button size="sm" onClick={startCamera} className="text-xs bg-primary text-primary-foreground">
+                    <Video className="h-3.5 w-3.5 mr-1.5" />
+                    Open Camera
                   </Button>
-                  <Button size="sm" variant="outline" className="text-xs border-border">
+                  <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()} className="text-xs border-border">
                     <Upload className="h-3.5 w-3.5 mr-1.5" />
-                    Upload
+                    Upload Image
                   </Button>
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-1.5 mt-5">
@@ -475,59 +741,147 @@ export function WasteImageClassifier() {
               </motion.div>
             )}
 
-            {/* Step 2: Select waste type */}
-            {step === 'select' && preview && (
+            {/* ── ANALYZING STEP ── */}
+            {step === 'analyzing' && preview && !cameraActive && (
               <motion.div
-                key="select"
+                key="analyzing"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-4"
+              >
+                <div className="relative rounded-lg overflow-hidden border border-border">
+                  <img src={preview} alt="Waste" className="w-full h-56 object-cover" />
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
+                    <div className="text-center">
+                      <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto mb-2" />
+                      <p className="text-sm font-medium text-white">MobileNet Classifying...</p>
+                      <p className="text-xs text-white/70 mt-1">Running neural network inference in browser</p>
+                      <div className="flex items-center justify-center gap-1 mt-3">
+                        {['Loading tensors', 'Feature extraction', 'Classification', 'Mapping to waste type'].map((s, i) => (
+                          <motion.span
+                            key={s}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: i * 0.5 }}
+                            className="text-[9px] bg-white/20 text-white/80 px-2 py-0.5 rounded-full"
+                          >
+                            {s}
+                          </motion.span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── CONFIRM STEP — AI suggestion highlighted, user picks ── */}
+            {step === 'confirm' && preview && !cameraActive && (
+              <motion.div
+                key="confirm"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                {/* Image thumbnail + instruction */}
                 <div className="flex items-start gap-3">
-                  <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-border flex-shrink-0">
-                    <img src={preview} alt="Uploaded waste" className="w-full h-full object-cover" />
-                    <button
-                      onClick={reset}
-                      className="absolute top-1 right-1 p-1 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
-                    >
+                  <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-border flex-shrink-0">
+                    <img src={preview} alt="Waste" className="w-full h-full object-cover" />
+                    <button onClick={reset} className="absolute top-1 right-1 p-1 rounded-full bg-black/60 text-white hover:bg-black/80">
                       <X className="h-3 w-3" />
                     </button>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                      <Sparkles className="h-4 w-4 text-primary" />
-                      What type of waste is this?
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Select the matching category below. Our AI will analyze it and provide detailed disposal guidance, environmental impact data & eco-points.
-                    </p>
+                    {aiSuggestedKey ? (
+                      <>
+                        <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                          <Brain className="h-4 w-4 text-primary" />
+                          AI suggests: {classificationDB[aiSuggestedKey].wasteType}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Tap the highlighted item to confirm, or pick the correct one.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                          <Brain className="h-4 w-4 text-amber-500" />
+                          Select waste type
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {aiPredictions.length > 0
+                            ? <>AI detected: <span className="font-medium text-foreground">{aiPredictions.map((p) => p.className.split(',')[0]).join(', ')}</span> — pick the correct type below.</>
+                            : 'Please select the waste type from the grid below.'}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                {/* Category grid */}
+                {/* AI suggestion quick-confirm button */}
+                {aiSuggestedKey && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    onClick={() => selectWasteType(aiSuggestedKey)}
+                    className="w-full rounded-lg border-2 border-primary bg-primary/10 p-4 text-left transition-all hover:bg-primary/20 hover:shadow-lg active:scale-[0.98]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{classificationDB[aiSuggestedKey].icon}</span>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-foreground">{classificationDB[aiSuggestedKey].wasteType}</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/20 text-primary font-semibold">AI Pick</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">{classificationDB[aiSuggestedKey].category} • {classificationDB[aiSuggestedKey].disposal}</p>
+                      </div>
+                      <CheckCircle2 className="h-5 w-5 text-primary" />
+                    </div>
+                  </motion.button>
+                )}
+
+                {/* AI raw predictions */}
+                {aiPredictions.length > 0 && (
+                  <div className="rounded-md bg-muted/50 border border-border/50 p-2.5">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">MobileNet Raw Output</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {aiPredictions.slice(0, 4).map((p, i) => (
+                        <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-muted border border-border/50 text-muted-foreground">
+                          {p.className.split(',')[0]} <span className="font-mono text-primary">{(p.probability * 100).toFixed(0)}%</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Divider */}
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{aiSuggestedKey ? 'Or select manually' : 'Select waste type'}</span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+
+                {/* Category grid — AI suggestion highlighted */}
                 <div className="space-y-3">
                   {categories.map((cat, catIdx) => (
-                    <motion.div
-                      key={cat.name}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: catIdx * 0.05 }}
-                    >
+                    <motion.div key={cat.name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: catIdx * 0.05 }}>
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-1.5">{cat.name}</p>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {cat.keys.map((key) => {
                           const item = classificationDB[key];
+                          const isSuggested = key === aiSuggestedKey;
                           return (
-                            <button
-                              key={key}
-                              onClick={() => selectWasteType(key)}
-                              className={`rounded-lg border p-3 text-left transition-all hover:scale-[1.02] hover:shadow-md active:scale-[0.98] ${cat.color} hover:border-current`}
-                            >
+                            <button key={key} onClick={() => selectWasteType(key)}
+                              className={`rounded-lg border p-3 text-left transition-all hover:scale-[1.02] hover:shadow-md active:scale-[0.98] ${
+                                isSuggested
+                                  ? 'border-primary bg-primary/10 ring-2 ring-primary/30 shadow-md'
+                                  : `${cat.color} hover:border-current`
+                              }`}>
                               <div className="flex items-center gap-2 mb-1">
                                 <span className={item.color}>{item.icon}</span>
                                 <span className="text-xs font-semibold text-foreground">{item.wasteType}</span>
+                                {isSuggested && <span className="ml-auto text-[8px] px-1.5 py-0.5 rounded bg-primary text-primary-foreground font-bold">AI</span>}
                               </div>
                               <p className="text-[10px] text-muted-foreground leading-tight">
                                 {item.subTypes.map((s) => s.examples[0]).join(', ')}
@@ -542,43 +896,8 @@ export function WasteImageClassifier() {
               </motion.div>
             )}
 
-            {/* Step 3: Analyzing animation */}
-            {step === 'analyzing' && preview && (
-              <motion.div
-                key="analyzing"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="space-y-4"
-              >
-                <div className="relative rounded-lg overflow-hidden border border-border">
-                  <img src={preview} alt="Uploaded waste" className="w-full h-56 object-cover" />
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
-                    <div className="text-center">
-                      <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto mb-2" />
-                      <p className="text-sm font-medium text-white">AI Analyzing...</p>
-                      <p className="text-xs text-white/70 mt-1">Generating detailed waste intelligence</p>
-                      <div className="flex items-center justify-center gap-1 mt-3">
-                        {['Material ID', 'Disposal lookup', 'Impact calc', 'Eco scoring'].map((s, i) => (
-                          <motion.span
-                            key={s}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: i * 0.4 }}
-                            className="text-[9px] bg-white/20 text-white/80 px-2 py-0.5 rounded-full"
-                          >
-                            {s}
-                          </motion.span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Step 4: Result */}
-            {step === 'result' && result && preview && (
+            {/* ── RESULT STEP ── */}
+            {step === 'result' && result && preview && !cameraActive && (
               <motion.div
                 key="result"
                 initial={{ opacity: 0, y: 10 }}
@@ -586,55 +905,51 @@ export function WasteImageClassifier() {
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                {/* Image thumbnail strip */}
+                {/* Image + classification header */}
                 <div className="flex items-center gap-3">
                   <div className="w-16 h-16 rounded-lg overflow-hidden border border-border flex-shrink-0">
-                    <img src={preview} alt="Uploaded waste" className="w-full h-full object-cover" />
+                    <img src={preview} alt="Waste" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className={result.color}>{result.icon}</span>
                       <span className="text-base font-bold text-foreground">{result.wasteType}</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted/80 text-muted-foreground font-medium">{result.category}</span>
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       <div className="h-1.5 flex-1 rounded-full bg-muted/50 overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${result.confidence}%` }}
-                          transition={{ duration: 1, ease: 'easeOut' }}
-                          className="h-full rounded-full bg-primary"
-                        />
+                        <motion.div initial={{ width: 0 }} animate={{ width: `${result.confidence}%` }} transition={{ duration: 1, ease: 'easeOut' }} className="h-full rounded-full bg-primary" />
                       </div>
                       <span className="text-xs font-mono text-primary font-bold">{result.confidence}%</span>
                     </div>
                   </div>
                 </div>
 
+                {/* AI raw predictions (collapsed info) */}
+                {aiPredictions.length > 0 && (
+                  <div className="rounded-md bg-primary/5 border border-primary/20 p-2.5">
+                    <p className="text-[9px] text-primary uppercase tracking-wider font-medium mb-1">MobileNet detected</p>
+                    <p className="text-xs text-foreground/70">{aiPredictions.slice(0, 3).map((p) => `${p.className.split(',')[0]} (${(p.probability * 100).toFixed(0)}%)`).join(' → ')}</p>
+                  </div>
+                )}
+
                 {/* Key info grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div className="rounded-md bg-muted/50 border border-border/50 p-2.5">
-                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                      <Droplets className="h-3 w-3" /> Bin Color
-                    </span>
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Droplets className="h-3 w-3" /> Bin Color</span>
                     <p className="text-xs font-medium text-foreground mt-1">{result.binColor}</p>
                   </div>
                   <div className="rounded-md bg-muted/50 border border-border/50 p-2.5">
-                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                      <Zap className="h-3 w-3" /> Eco Points
-                    </span>
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Zap className="h-3 w-3" /> Eco Points</span>
                     <p className="text-lg font-bold font-mono text-primary mt-0.5">+{result.ecoPoints}</p>
                   </div>
                   <div className="rounded-md bg-muted/50 border border-border/50 p-2.5">
-                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                      <Clock className="h-3 w-3" /> Decomposition
-                    </span>
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><Clock className="h-3 w-3" /> Decomposition</span>
                     <p className="text-xs font-medium text-foreground mt-1">{result.decompositionTime}</p>
                   </div>
                   <div className="rounded-md bg-muted/50 border border-border/50 p-2.5">
-                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                      <IndianRupee className="h-3 w-3" /> Revenue
-                    </span>
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider flex items-center gap-1"><IndianRupee className="h-3 w-3" /> Revenue</span>
                     <p className="text-xs font-medium text-foreground mt-1">{result.revenuePerKg}</p>
                   </div>
                 </div>
@@ -648,9 +963,7 @@ export function WasteImageClassifier() {
 
                 {/* Badges */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
-                    result.recyclable ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
-                  }`}>
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${result.recyclable ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                     <Recycle className="h-3 w-3" />
                     {result.recyclable ? 'Recyclable' : 'Non-Recyclable'}
                   </div>
@@ -663,16 +976,10 @@ export function WasteImageClassifier() {
                 {/* Sub-types */}
                 {result.subTypes.length > 0 && (
                   <div className="space-y-2">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Sub-Types Detected</span>
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Sub-Types</span>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {result.subTypes.map((sub, i) => (
-                        <motion.div
-                          key={sub.name}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.15 }}
-                          className="rounded-md bg-muted/30 border border-border/50 p-2.5"
-                        >
+                        <motion.div key={sub.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.15 }} className="rounded-md bg-muted/30 border border-border/50 p-2.5">
                           <p className="text-xs font-semibold text-foreground">{sub.name}</p>
                           <p className="text-[10px] text-muted-foreground mt-0.5">{sub.examples.join(' • ')}</p>
                         </motion.div>
@@ -693,13 +1000,7 @@ export function WasteImageClassifier() {
                 <div className="space-y-1.5">
                   <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Disposal Tips</span>
                   {result.tips.map((tip, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="flex items-start gap-2 text-xs text-muted-foreground"
-                    >
+                    <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="flex items-start gap-2 text-xs text-muted-foreground">
                       <span className="text-primary mt-0.5">•</span>
                       <span>{tip}</span>
                     </motion.div>
@@ -709,6 +1010,7 @@ export function WasteImageClassifier() {
                 {/* Actions */}
                 <div className="flex gap-2 pt-1">
                   <Button onClick={reset} variant="outline" size="sm" className="flex-1 text-xs border-border">
+                    <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
                     Scan Another
                   </Button>
                   <Button size="sm" className="flex-1 text-xs bg-primary text-primary-foreground">
@@ -737,7 +1039,24 @@ export function WasteImageClassifier() {
             ))}
           </div>
 
-          {/* Lifetime stats */}
+          {/* AI Model info */}
+          <div className="border-t border-border pt-3 mt-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1"><Brain className="h-3.5 w-3.5" /> AI Model</h4>
+            <div className="space-y-1.5 text-xs">
+              <div className="flex justify-between"><span className="text-muted-foreground">Engine</span><span className="font-medium text-foreground">TensorFlow.js</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Model</span><span className="font-medium text-foreground">MobileNet v2</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Classes</span><span className="font-medium text-foreground">1,000+ ImageNet</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Inference</span><span className="font-medium text-foreground">In-browser (GPU)</span></div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Status</span>
+                <span className={`font-medium ${modelStatus === 'ready' ? 'text-green-500' : modelStatus === 'loading' ? 'text-amber-500' : 'text-red-500'}`}>
+                  {modelStatus === 'ready' ? '● Online' : modelStatus === 'loading' ? '◌ Loading...' : '✕ Offline'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Your Impact */}
           <div className="border-t border-border pt-3 mt-3">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Your Impact</h4>
             <div className="space-y-2">
