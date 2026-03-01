@@ -22,6 +22,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
+    <RoleProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -38,12 +39,14 @@ const App = () => (
               <Route path="/governance" element={<GovernancePage />} />
               <Route path="/circular" element={<CircularPage />} />
               <Route path="/chatbot" element={<ChatbotPage />} />
+              <Route path="/public" element={<PublicDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
         </div>
       </BrowserRouter>
     </TooltipProvider>
+    </RoleProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

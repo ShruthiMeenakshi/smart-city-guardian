@@ -12,26 +12,30 @@ import {
   ChevronLeft,
   Zap,
   Brain,
+  Users,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useRole, Role } from '@/contexts/RoleContext';
 
-const navItems = [
-  { path: '/', label: 'Command Center', icon: LayoutDashboard },
-  { path: '/inspector', label: 'Inspector Panel', icon: Shield },
-  { path: '/reports', label: 'Reports', icon: FileWarning },
-  { path: '/map', label: 'Route & Map', icon: Map },
-  { path: '/intelligence', label: 'Intelligence Hub', icon: Brain },
-  { path: '/governance', label: 'Governance', icon: Trophy },
-  { path: '/circular', label: 'Circular Economy', icon: Recycle },
-  { path: '/chatbot', label: 'AI Assistant', icon: MessageSquare },
+const allNavItems = [
+  { path: '/', label: 'Command Center', icon: LayoutDashboard, roles: ['Commissioner'] as Role[] },
+  { path: '/inspector', label: 'Inspector Panel', icon: Shield, roles: ['Inspector'] as Role[] },
+  { path: '/public', label: 'My Ward', icon: Users, roles: ['Public'] as Role[] },
+  { path: '/reports', label: 'Reports', icon: FileWarning, roles: ['Commissioner', 'Inspector', 'Public'] as Role[] },
+  { path: '/map', label: 'Route & Map', icon: Map, roles: ['Commissioner', 'Inspector'] as Role[] },
+  { path: '/intelligence', label: 'Intelligence Hub', icon: Brain, roles: ['Commissioner'] as Role[] },
+  { path: '/governance', label: 'Governance', icon: Trophy, roles: ['Commissioner', 'Public'] as Role[] },
+  { path: '/circular', label: 'Circular Economy', icon: Recycle, roles: ['Commissioner', 'Public'] as Role[] },
+  { path: '/chatbot', label: 'AI Assistant', icon: MessageSquare, roles: ['Commissioner', 'Inspector', 'Public'] as Role[] },
 ];
 
-const roles = ['Inspector', 'Commissioner', 'Public'];
+const roles: Role[] = ['Inspector', 'Commissioner', 'Public'];
 
 export function AppSidebar() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [role, setRole] = useState('Commissioner');
+  const { role, setRole } = useRole();
+  const navItems = allNavItems.filter(item => item.roles.includes(role));
 
   return (
     <aside className={`h-screen sticky top-0 bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ${collapsed ? 'w-16' : 'w-60'}`}>
