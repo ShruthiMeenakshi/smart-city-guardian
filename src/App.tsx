@@ -12,6 +12,7 @@ import GovernancePage from "./pages/Governance";
 import CircularPage from "./pages/Circular";
 import ChatbotPage from "./pages/Chatbot";
 import InspectorPage from "./pages/Inspector";
+import IntelligencePage from "./pages/Intelligence";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
