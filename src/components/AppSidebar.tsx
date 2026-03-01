@@ -60,7 +60,7 @@ export function AppSidebar() {
           <label className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">Role</label>
           <select
             value={role}
-            onChange={(e) => setRole(e.target.value)}
+            onChange={(e) => setRole(e.target.value as Role)}
             className="w-full mt-1 bg-sidebar-accent text-sidebar-accent-foreground text-xs rounded-md px-2 py-1.5 border border-sidebar-border outline-none"
           >
             {roles.map(r => <option key={r} value={r}>{r}</option>)}
