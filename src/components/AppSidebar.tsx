@@ -20,6 +20,7 @@ const navItems = [
   { path: '/inspector', label: 'Inspector Panel', icon: Shield },
   { path: '/reports', label: 'Reports', icon: FileWarning },
   { path: '/map', label: 'Route & Map', icon: Map },
+  { path: '/intelligence', label: 'Intelligence Hub', icon: Brain },
   { path: '/governance', label: 'Governance', icon: Trophy },
   { path: '/circular', label: 'Circular Economy', icon: Recycle },
   { path: '/chatbot', label: 'AI Assistant', icon: MessageSquare },
