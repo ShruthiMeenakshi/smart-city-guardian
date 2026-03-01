@@ -173,7 +173,6 @@
 
   .card-glow {
     box-shadow: var(--shadow-card);
-    border: 1px solid hsl(222 30% 18%);
   }
 
   .card-glow:hover {
