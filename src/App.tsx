@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { RoleProvider } from "@/contexts/RoleContext";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
 import ReportsPage from "./pages/Reports";
@@ -12,6 +13,8 @@ import GovernancePage from "./pages/Governance";
 import CircularPage from "./pages/Circular";
 import ChatbotPage from "./pages/Chatbot";
 import InspectorPage from "./pages/Inspector";
+import IntelligencePage from "./pages/Intelligence";
+import PublicDashboard from "./pages/PublicDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,6 +22,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
+    <RoleProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -31,15 +35,18 @@ const App = () => (
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/map" element={<MapPage />} />
               <Route path="/inspector" element={<InspectorPage />} />
+              <Route path="/intelligence" element={<IntelligencePage />} />
               <Route path="/governance" element={<GovernancePage />} />
               <Route path="/circular" element={<CircularPage />} />
               <Route path="/chatbot" element={<ChatbotPage />} />
+              <Route path="/public" element={<PublicDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
         </div>
       </BrowserRouter>
     </TooltipProvider>
+    </RoleProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
