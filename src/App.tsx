@@ -18,6 +18,8 @@ import InspectorPage from "./pages/Inspector";
 import IntelligencePage from "./pages/Intelligence";
 import PublicDashboard from "./pages/PublicDashboard";
 import NotFound from "./pages/NotFound";
+import RevenueCalculator from "./pages/RevenueCalculator";
+import WardRewards from "./pages/WardRewards";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,8 @@ function AuthenticatedLayout() {
           <Route path="/circular" element={<CircularPage />} />
           <Route path="/chatbot" element={<ChatbotPage />} />
           <Route path="/public" element={<PublicDashboard />} />
+          <Route path="/revenue-calculator" element={<RevenueCalculator />} />
+          <Route path="/ward-rewards" element={<WardRewards />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

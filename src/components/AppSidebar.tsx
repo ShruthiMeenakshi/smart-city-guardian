@@ -28,6 +28,8 @@ import {
 import { useRole, Role } from '@/contexts/RoleContext';
 
 const allNavItems = [
+    { path: '/revenue-calculator', label: 'Revenue Calculator', icon: Recycle, roles: ['Commissioner', 'Inspector', 'Public'] as Role[] },
+    { path: '/ward-rewards', label: 'Ward Rewards', icon: Trophy, roles: ['Commissioner', 'Inspector', 'Public'] as Role[] },
   { path: '/', label: 'Command Center', icon: LayoutDashboard, roles: ['Commissioner'] as Role[] },
   { path: '/inspector', label: 'Inspector Panel', icon: Shield, roles: ['Inspector'] as Role[] },
   { path: '/inspector#complaints', label: 'Ward Complaints', icon: Eye, roles: ['Inspector'] as Role[] },
