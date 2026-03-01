@@ -12,6 +12,7 @@ import GovernancePage from "./pages/Governance";
 import CircularPage from "./pages/Circular";
 import ChatbotPage from "./pages/Chatbot";
 import InspectorPage from "./pages/Inspector";
+import IntelligencePage from "./pages/Intelligence";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/map" element={<MapPage />} />
               <Route path="/inspector" element={<InspectorPage />} />
+              <Route path="/intelligence" element={<IntelligencePage />} />
               <Route path="/governance" element={<GovernancePage />} />
               <Route path="/circular" element={<CircularPage />} />
               <Route path="/chatbot" element={<ChatbotPage />} />
