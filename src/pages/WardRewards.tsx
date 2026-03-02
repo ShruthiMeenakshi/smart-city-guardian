@@ -30,10 +30,10 @@ const badges = [
 
 const WardRewards: React.FC = () => {
   return (
-    <div className="max-w-4xl mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6 text-emerald-400">🏆 Ward Rewards & Leaderboard</h1>
+    <div className="rewards-page">
+      <h1 className="rewards-page__title">🏆 Rewards & Leaderboard</h1>
       {/* Top Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-white/5 border border-white/10 rounded-xl p-6 mb-10">
+      <div className="rewards-page__stats-grid">
         {topStats.map((stat) => (
           <div key={stat.label} className="flex flex-col items-center">
             <div className="text-2xl font-bold text-emerald-300">{stat.value}</div>
@@ -42,7 +42,7 @@ const WardRewards: React.FC = () => {
         ))}
       </div>
       {/* Podium */}
-      <div className="flex justify-center items-end gap-8 mb-12">
+      <div className="rewards-page__podium">
         {podium.map((item, idx) => (
           <div key={item.rank} className={`flex flex-col items-center ${item.rank === 1 ? 'order-2' : item.rank === 2 ? 'order-1' : 'order-3'}`}>
             <div className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl mb-2 border-4 ${item.rank === 1 ? 'border-yellow-400' : item.rank === 2 ? 'border-gray-400' : 'border-orange-700'} bg-gray-900`}>{item.avatar}</div>
@@ -54,9 +54,9 @@ const WardRewards: React.FC = () => {
         ))}
       </div>
       {/* Leaderboard Table */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-10">
+      <div className="rewards-page__card">
         <h2 className="text-xl font-semibold text-emerald-300 mb-4">Leaderboard</h2>
-        <table className="w-full text-left text-white/90">
+        <table className="rewards-page__table">
           <thead>
             <tr>
               <th className="py-2">Rank</th>
@@ -66,7 +66,7 @@ const WardRewards: React.FC = () => {
           </thead>
           <tbody>
             {leaderboard.map((row, idx) => (
-              <tr key={row.name} className="border-b border-white/10 hover:bg-emerald-900/10">
+              <tr key={row.name} className="rewards-page__table-row">
                 <td className="py-2 font-bold">{idx + 4}</td>
                 <td className="py-2">{row.name}</td>
                 <td className="py-2">{row.score}</td>
@@ -76,7 +76,7 @@ const WardRewards: React.FC = () => {
         </table>
       </div>
       {/* Badges */}
-      <div className="flex gap-4 justify-center">
+      <div className="rewards-page__badges">
         {badges.map((badge) => (
           <div key={badge.label} className="flex items-center gap-2 bg-emerald-900/30 border border-emerald-700 rounded-lg px-4 py-2 text-emerald-200">
             <span className="text-xl">{badge.icon}</span>

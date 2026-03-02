@@ -39,7 +39,8 @@ function AuthenticatedLayout() {
           <Route path="/chatbot" element={<ChatbotPage />} />
           <Route path="/public" element={<PublicDashboard />} />
           <Route path="/revenue-calculator" element={<RevenueCalculator />} />
-          <Route path="/ward-rewards" element={<WardRewards />} />
+          <Route path="/rewards" element={<WardRewards />} />
+          <Route path="/ward-rewards" element={<Navigate to="/rewards" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

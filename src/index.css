@@ -219,3 +219,103 @@
     border-radius: 3px;
   }
 }
+
+@layer components {
+  .rewards-page {
+    @apply max-w-4xl mx-auto py-8;
+  }
+
+  .rewards-page__title {
+    @apply text-3xl font-bold mb-6 text-emerald-400;
+  }
+
+  .rewards-page__stats-grid {
+    @apply grid grid-cols-2 md:grid-cols-4 gap-6 rounded-xl p-6 mb-10 border;
+    background-color: hsl(var(--card) / 0.55);
+    border-color: hsl(var(--border));
+  }
+
+  .rewards-page__podium {
+    @apply flex justify-center items-end gap-8 mb-12;
+  }
+
+  .rewards-page__card {
+    @apply rounded-xl p-6 mb-10 border;
+    background-color: hsl(var(--card) / 0.55);
+    border-color: hsl(var(--border));
+  }
+
+  .rewards-page__table {
+    @apply w-full text-left;
+    color: hsl(var(--foreground) / 0.9);
+  }
+
+  .rewards-page__table-row {
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .rewards-page__table-row:hover {
+    background-color: hsl(var(--accent) / 0.1);
+  }
+
+  .rewards-page__badges {
+    @apply flex flex-wrap gap-4 justify-center;
+  }
+
+  .revenue-page {
+    @apply max-w-2xl mx-auto py-8;
+  }
+
+  .revenue-page__title {
+    @apply text-3xl font-bold mb-6 text-cyan-500;
+  }
+
+  .revenue-page__description {
+    color: hsl(var(--muted-foreground));
+    @apply mb-6;
+  }
+
+  .revenue-page__toggle {
+    @apply underline;
+    color: hsl(var(--primary));
+  }
+
+  .revenue-page__row {
+    @apply flex items-center gap-4;
+  }
+
+  .revenue-page__label {
+    @apply w-24 capitalize;
+    color: hsl(var(--foreground) / 0.85);
+  }
+
+  .revenue-page__input {
+    @apply flex-1 rounded px-3 py-2 border focus:outline-none;
+    background-color: hsl(var(--input));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+  }
+
+  .revenue-page__rate-input {
+    @apply w-24 rounded px-2 py-1 border focus:outline-none;
+    background-color: hsl(var(--input));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+  }
+
+  .revenue-page__unit {
+    @apply text-xs ml-1;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .revenue-page__summary {
+    @apply mt-8 rounded-xl p-6 border;
+    background-color: hsl(var(--primary) / 0.12);
+    border-color: hsl(var(--border));
+  }
+
+  .revenue-page__table {
+    @apply w-full text-left mb-2;
+    color: hsl(var(--foreground) / 0.92);
+  }
+}

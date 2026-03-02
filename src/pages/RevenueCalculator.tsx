@@ -34,19 +34,19 @@ const RevenueCalculator: React.FC = () => {
   }, 0);
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6 text-cyan-500">♻️ Revenue Calculator</h1>
-      <p className="mb-6 text-gray-300">Estimate potential revenue from recyclable waste. Enter quantities (kg) for each type. <button className="underline text-cyan-400" onClick={() => setShowRates(r => !r)}>{showRates ? 'Hide' : 'Show'} Rates</button></p>
+    <div className="revenue-page">
+      <h1 className="revenue-page__title">♻️ Revenue Calculator</h1>
+      <p className="revenue-page__description">Estimate potential revenue from recyclable waste. Enter quantities (kg) for each type. <button className="revenue-page__toggle" onClick={() => setShowRates(r => !r)}>{showRates ? 'Hide' : 'Show'} Rates</button></p>
       <form className="space-y-4">
         {Object.keys(quantities).map(type => (
-          <div key={type} className="flex items-center gap-4">
-            <label className="w-24 capitalize text-gray-200" htmlFor={type}>{type}</label>
+          <div key={type} className="revenue-page__row">
+            <label className="revenue-page__label" htmlFor={type}>{type}</label>
             <input
               id={type}
               type="number"
               min="0"
               step="any"
-              className="flex-1 rounded px-3 py-2 bg-gray-900 border border-cyan-700 text-cyan-200 focus:outline-none"
+              className="revenue-page__input"
               placeholder="0"
               value={quantities[type as keyof typeof quantities]}
               onChange={e => handleQtyChange(type, e.target.value)}
@@ -56,19 +56,19 @@ const RevenueCalculator: React.FC = () => {
                 type="number"
                 min="0"
                 step="any"
-                className="w-24 rounded px-2 py-1 bg-gray-800 border border-cyan-700 text-cyan-300 focus:outline-none"
+                className="revenue-page__rate-input"
                 value={rates[type as keyof typeof rates]}
                 onChange={e => handleRateChange(type, e.target.value)}
                 title="Market rate per kg"
               />
             )}
-            {showRates && <span className="text-xs text-gray-400 ml-1">₹/kg</span>}
+            {showRates && <span className="revenue-page__unit">₹/kg</span>}
           </div>
         ))}
       </form>
-      <div className="mt-8 bg-cyan-900/30 border border-cyan-700 rounded-xl p-6">
+      <div className="revenue-page__summary">
         <h2 className="text-xl font-semibold text-cyan-300 mb-4">Summary</h2>
-        <table className="w-full text-left text-cyan-100 mb-2">
+        <table className="revenue-page__table">
           <thead>
             <tr>
               <th className="py-1">Type</th>
