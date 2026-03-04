@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { RoleProvider, useRole } from "@/contexts/RoleContext";
+import { ReportsProvider } from "@/contexts/ReportsContext";
 import { AppSidebar } from "@/components/AppSidebar";
 import { FloatingChatWidget } from "@/components/FloatingChatWidget";
 import Login from "./pages/Login";
