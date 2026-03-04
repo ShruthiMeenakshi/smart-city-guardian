@@ -125,11 +125,78 @@ const PublicDashboard = () => {
                 </div>
               </motion.div>
 
-              {/* Eco tips */}
+              {/* Today's Collection Schedule */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="rounded-lg bg-card border border-border p-6 card-glow"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-foreground">Today's Collection</h2>
+                  <span className="text-[10px] bg-success/10 text-success px-2 py-0.5 rounded-full font-medium">
+                    {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { time: '6:30 AM', type: 'Organic Waste', bin: '🟢 Green Bin', status: 'Completed', statusColor: 'text-success' },
+                    { time: '8:00 AM', type: 'Dry Recyclables', bin: '🔵 Blue Bin', status: 'In Progress', statusColor: 'text-primary' },
+                    { time: '10:00 AM', type: 'E-Waste Pickup', bin: '🟠 Orange Bin', status: 'Upcoming', statusColor: 'text-warning' },
+                  ].map((item, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 + i * 0.08 }}
+                      className="p-3 rounded-md bg-muted/50 border border-border/50"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-mono font-bold text-foreground">{item.time}</span>
+                        <span className={`text-[9px] font-medium ${item.statusColor}`}>{item.status}</span>
+                      </div>
+                      <p className="text-xs font-medium text-foreground">{item.type}</p>
+                      <p className="text-[10px] text-muted-foreground">{item.bin}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Quick Actions */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
+                className="rounded-lg bg-card border border-border p-6 card-glow"
+              >
+                <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { label: 'Report Garbage', icon: '🗑️', tab: 'report', color: 'bg-destructive/10 border-destructive/20 hover:bg-destructive/20' },
+                    { label: 'Classify Waste', icon: '📷', tab: 'classify', color: 'bg-primary/10 border-primary/20 hover:bg-primary/20' },
+                    { label: 'Track Status', icon: '📋', tab: 'track', color: 'bg-info/10 border-info/20 hover:bg-info/20' },
+                    { label: 'View Rewards', icon: '🎁', tab: 'rewards', color: 'bg-warning/10 border-warning/20 hover:bg-warning/20' },
+                  ].map((action, i) => (
+                    <motion.button
+                      key={i}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.25 + i * 0.06 }}
+                      onClick={() => onTabChange(action.tab)}
+                      className={`p-4 rounded-lg border text-center transition-all ${action.color}`}
+                    >
+                      <span className="text-2xl block mb-1">{action.icon}</span>
+                      <span className="text-xs font-medium text-foreground">{action.label}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Eco tips */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
                 className="rounded-lg bg-card border border-border p-6 card-glow"
               >
                 <h2 className="text-lg font-semibold text-foreground mb-4">Eco Tips & Actions</h2>
