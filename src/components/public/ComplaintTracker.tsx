@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { mockReports, severityLabels } from '@/lib/mockData';
+import { severityLabels } from '@/lib/mockData';
 import { Clock, CheckCircle, Truck, AlertTriangle, Search, Filter } from 'lucide-react';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { useReports } from '@/contexts/ReportsContext';
 
 const statusSteps = ['pending', 'assigned', 'in-progress', 'resolved'] as const;
 const statusLabels: Record<string, string> = {
