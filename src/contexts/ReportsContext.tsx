@@ -4,6 +4,8 @@ import { Report, mockReports } from '@/lib/mockData';
 interface ReportsContextType {
   reports: Report[];
   addReport: (report: Omit<Report, 'id' | 'timestamp' | 'citizenId' | 'status'>) => void;
+  updateReport: (id: string, updates: Partial<Omit<Report, 'id' | 'timestamp' | 'citizenId'>>) => void;
+  deleteReport: (id: string) => void;
 }
 
 const ReportsContext = createContext<ReportsContextType | undefined>(undefined);
