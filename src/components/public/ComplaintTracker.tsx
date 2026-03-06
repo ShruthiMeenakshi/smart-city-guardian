@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { mockReports, severityLabels } from '@/lib/mockData';
+import { severityLabels } from '@/lib/mockData';
 import { Clock, CheckCircle, Truck, AlertTriangle, Search, Filter } from 'lucide-react';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { useReports } from '@/contexts/ReportsContext';
 
 const statusSteps = ['pending', 'assigned', 'in-progress', 'resolved'] as const;
 const statusLabels: Record<string, string> = {
@@ -24,12 +25,12 @@ const statusColor: Record<string, string> = {
   resolved: 'text-success bg-success/10 border-success/30',
 };
 
-// Simulating citizen's own reports (first 4 from mock)
-const citizenReports = mockReports.slice(0, 5);
-
 export function ComplaintTracker() {
+  const { reports } = useReports();
   const [filter, setFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
+
+  const citizenReports = [...reports].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
   const filtered = citizenReports.filter(r => {
     if (filter !== 'all' && r.status !== filter) return false;
