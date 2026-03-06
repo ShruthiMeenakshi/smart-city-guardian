@@ -26,8 +26,16 @@ export function ReportsProvider({ children }: { children: ReactNode }) {
     setReports((prev) => [newReport, ...prev]);
   }, []);
 
+  const updateReport = useCallback((id: string, updates: Partial<Omit<Report, 'id' | 'timestamp' | 'citizenId'>>) => {
+    setReports((prev) => prev.map((r) => (r.id === id && r.citizenId === 'C999' ? { ...r, ...updates } : r)));
+  }, []);
+
+  const deleteReport = useCallback((id: string) => {
+    setReports((prev) => prev.filter((r) => !(r.id === id && r.citizenId === 'C999')));
+  }, []);
+
   return (
-    <ReportsContext.Provider value={{ reports, addReport }}>
+    <ReportsContext.Provider value={{ reports, addReport, updateReport, deleteReport }}>
       {children}
     </ReportsContext.Provider>
   );
